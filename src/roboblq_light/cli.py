@@ -26,16 +26,28 @@ from . import Light, find_devices, protocol
 # A small built-in palette. The "day" / "night" choices come from the original
 # ambient-lighting recommendation: warm white for focus, deep violet for
 # low-light gaming.
+# Other colours are tuned for ambient lighting use —
+# the named hue dominates, but the other channels are non-zero so the strip
+# casts illuminating light rather than a colour-distorting wash.
 PRESETS: dict[str, tuple[int, int, int]] = {
-    "day":    (255, 220, 180),  # warm white
-    "night":  (60,  0,   160),  # deep violet
-    "off":    (0,   0,   0),
-    "white":  (255, 255, 255),
-    "red":    (255, 0,   0),
-    "green":  (0,   255, 0),
-    "blue":   (0,   0,   255),
-}
+    # Ambient
+    "day":     (255, 220, 180),  # warm white
+    "night":   (60,  0,   160),  # deep violet
+    "off":     (0,   0,   0),
 
+    # Tinted whites — colour identity preserved, room stays usable
+    "red":     (255, 60,  40),
+    "orange":  (255, 120, 50),
+    "yellow":  (255, 200, 80),
+    "green":   (120, 255, 100),
+    "teal":    (80,  200, 180),
+    "cyan":    (120, 210, 255),
+    "blue":    (80,  120, 255),
+    "purple":  (160, 80,  200),
+    "pink":    (255, 140, 180),
+    "magenta": (255, 110, 200),
+    "white":   (255, 240, 220),  # unchanged
+}
 
 # ---------------------------------------------------------------------------
 # Subcommand handlers
@@ -101,7 +113,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "-v", "--verbose", action="store_true",
         help="enable debug logging",
     )
-    sub = parser.add_subparsers(dest="command", required=True)
+    sub = parser.add_subparsers(dest="command", required=False)
 
     sub.add_parser("probe", help="list connected strips").set_defaults(
         func=_cmd_probe
@@ -139,6 +151,14 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if args.verbose else logging.WARNING,
         format="%(message)s",
     )
+
+    if args.command is None:
+        parser.print_help()
+        print()
+        print("Available presets:")
+        for name, (r, g, b) in PRESETS.items():
+            print(f"  {name:<10} rgb({r:>3}, {g:>3}, {b:>3})")
+        return 0
 
     func: Callable[[argparse.Namespace], int] = args.func
     return func(args)

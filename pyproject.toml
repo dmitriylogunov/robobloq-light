@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roboblq-light"
+version = "0.1.0"
+description = "Control ROBOBLOQ USB ambient LED strips (the kind shipped with SyncLight) over HID."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Dmitriy Logunov" },
+]
+keywords = ["led", "rgb", "hid", "ambient", "synclight", "roboblq"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: System :: Hardware",
+]
+dependencies = [
+    "hidapi>=0.14",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+[project.scripts]
+rgblight = "roboblq_light.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,6 +1,10 @@
 # roboblq-light
 
-Control ROBOBLOQ USB ambient LED strips - the kind shipped with the SyncLight Windows app - directly over HID. No SyncLight running, no proprietary software in the loop.
+Control ROBOBLOQ USB ambient LED strips - the kind shipped with the SyncLight Windows app - directly over HID. No SyncLight required.
+
+Purpose: Allows scheduling of strip colours. Adds softer colour presets, as opposed to the built-in sharp monochrome colours.
+
+Tested on Windows 11, but being cross-platform and open-source, can be adapted to Ubuntu, Raspberry Pi, or anything else.
 
 Reverse-engineered from SyncLight's Electron `app.asar`. Tested on the strip identifying as `VID=0x1A86 / PID=0xFE07`, manufacturer "ROBOBLOQ", product "USBHID".
 

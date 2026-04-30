@@ -99,6 +99,10 @@ def _cmd_preset(args: argparse.Namespace) -> int:
         light.set_color(*rgb)
     return 0
 
+def _cmd_white(args: argparse.Namespace) -> int:
+    with Light.open() as light:
+        light.set_white_bright(args.p1, args.p2)
+    return 0
 
 # ---------------------------------------------------------------------------
 # Argument parser
@@ -139,6 +143,11 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p_preset.add_argument("name")
     p_preset.set_defaults(func=_cmd_preset)
+
+    p_white = sub.add_parser("white", help="set white-LED parameters (experimental)")
+    p_white.add_argument("p1", type=int, help="first byte (0-255)")
+    p_white.add_argument("p2", type=int, help="second byte (0-255)")
+    p_white.set_defaults(func=_cmd_white)    
 
     return parser
 

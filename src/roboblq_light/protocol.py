@@ -78,6 +78,7 @@ ACTION_SET_LAMPS_AMOUNT      = 149  # 0x95  configure section count
 ACTION_SET_WHITE_BRIGHT      = 150  # 0x96
 ACTION_TURN_OFF_LIGHT        = 151  # 0x97
 ACTION_SET_COMPUTER_RHYTHM   = 152  # 0x98
+ACTION_SET_WHITE_BRIGHT      = 150  # 0x96  white-LED channel control
 
 
 # ---------------------------------------------------------------------------
@@ -258,6 +259,22 @@ def build_solid_color(r: int, g: int, b: int, *,
     Equivalent to ``build_set_section_led([Section(0, r, g, b)])``.
     """
     return build_set_section_led([Section(0, r, g, b)], id_gen=id_gen)
+
+def build_set_white_bright(param1: int, param2: int, *,
+                           id_gen: PacketIdGenerator | None = None) -> bytes:
+    """
+    Build a setWhiteBright packet.
+    
+    The exact semantics of the two parameters are not yet confirmed.
+    Likely candidates:
+        - (warm_white_brightness, cool_white_brightness)
+        - (brightness, color_temperature)
+        - (white_brightness, white_mode)
+    
+    Both bytes accept 0-255. Experiment to determine roles.
+    """
+    payload = bytes([param1 & 0xFF, param2 & 0xFF])
+    return _frame(ACTION_SET_WHITE_BRIGHT, payload, id_gen=id_gen)    
 
 
 # ---------------------------------------------------------------------------

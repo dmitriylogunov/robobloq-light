@@ -102,6 +102,19 @@ class Light:
         firmware broadcasts this to all physical sections.
         """
         self._hid.write(protocol.build_solid_color(r, g, b, id_gen=self._id_gen))
+        
+    def set_white_bright(self, param1: int, param2: int) -> None:
+        """
+        Drive the strip's dedicated white LEDs (in addition to RGB).
+        
+        Most ambient strips with this protocol have warm-white and cool-white
+        LEDs alongside the RGB ones. This command controls them. Parameter
+        semantics are not yet fully understood — typically one byte is
+        intensity, the other is mode/temperature.
+        """
+        self._hid.write(protocol.build_set_white_bright(
+            param1, param2, id_gen=self._id_gen,
+        ))        
 
     # -------------------------------------------------------------- raw send
 

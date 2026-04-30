@@ -100,6 +100,46 @@ pytest
 
 Tests cover the pure protocol layer with captured packets from real device runs as ground truth. They don't require hardware.
 
+## Scheduling at Windows login
+
+The repo includes `setup-ambient-schedule.ps1`, which registers three Windows scheduled tasks so the strip changes colour automatically:
+
+- **AmbientLight-Day** — applies the `day` preset at 7:00am every day.
+- **AmbientLight-Night** — applies the `night` preset at 7:00pm every day.
+- **AmbientLight-Login** — runs at logon, picks `day` or `night` based on the current hour. Has a 15-second delay so USB is ready before the script runs.
+
+To install:
+
+```powershell
+.\setup-ambient-schedule.ps1
+```
+
+No admin rights needed — all three tasks run as your user, which is what gives them access to your session's USB devices.
+
+To test the tasks without waiting for the schedule:
+
+```powershell
+Start-ScheduledTask -TaskName "AmbientLight-Day"
+Start-ScheduledTask -TaskName "AmbientLight-Night"
+Start-ScheduledTask -TaskName "AmbientLight-Login"
+```
+
+To remove the tasks:
+
+```powershell
+Unregister-ScheduledTask -TaskName "AmbientLight-Day"   -Confirm:$false
+Unregister-ScheduledTask -TaskName "AmbientLight-Night" -Confirm:$false
+Unregister-ScheduledTask -TaskName "AmbientLight-Login" -Confirm:$false
+```
+
+To change the schedule, edit the `$dayTime` and `$nightTime` variables at the top of the script and re-run it (the `-Force` flag overwrites existing tasks).
+
+To inspect or manually disable the tasks, open Task Scheduler (`taskschd.msc`) and look for the three `AmbientLight-*` entries.
+
+### Caveat: SyncLight autostart
+
+If SyncLight is set to launch with Windows, it will grab an exclusive HID handle before the login task runs and the script's writes will silently no-op. Disable SyncLight's autostart via Task Manager's Startup tab, or in SyncLight's own settings.
+
 ## License
 
 MIT.
